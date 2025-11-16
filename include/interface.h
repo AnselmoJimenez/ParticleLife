@@ -1,6 +1,6 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-void init_interface(void);
+void init_interface(Font);
 
 #endif
