@@ -1,30 +1,36 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../include/particle.h"
+#include "../include/simulation.h"
 
 #include "raylib.h"
 
+#define NUMCLASSIFIERS  6
+Color classifier[NUMCLASSIFIERS] = { 
+    RED, GREEN, BLUE, PINK, YELLOW, PURPLE 
+};
+
 int main(void) {
-    const int screen_width = 1280;
-    const int screen_height = 720;
+    int screen_width = 1280;
+    int screen_height = 720;
 
     InitWindow(screen_width, screen_height, "Particle Life");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
 
-    // Main game loop
-    while (!WindowShouldClose()) {
-        // Draw
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+    particle_t *particles = generate_particles(screen_width, screen_height, 3);
 
-        // Draw Particles
-        draw_particle(new_particle((Vector2) {screen_width / 2, screen_height / 2}, 0.0f, 0.0f, BLUE));
-
-        EndDrawing();
+    if (gameloop(particles, &screen_width, &screen_height) != 0) {
+        destroy_particles(particles);
+        CloseWindow();
+        return 1;
     }
 
-    CloseWindow();        // Close window and OpenGL context
+    destroy_particles(particles);
+
+    // Close window and OpenGL context
+    CloseWindow();
 
     return 0;
 }
