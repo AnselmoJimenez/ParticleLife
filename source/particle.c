@@ -3,7 +3,6 @@
 
 #include "../include/particle.h"
 
-#define RADIUS 3
 #define NUMCLASSIFIERS  6
 
 // new_particle : return a new particle object
