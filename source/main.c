@@ -2,49 +2,26 @@
 
 #include "SDL.h"
 
+#include "../include/application.h"
+
 int main(void) {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        printf("SDL Initialization failed. ERROR: %s\n", SDL_GetError());
-        return 1;
-    }
-
-    // Creating a window
-    SDL_Window *window = SDL_CreateWindow("Window Test", 800, 600, SDL_WINDOW_OPENGL);
-    if (window == NULL) {
-        printf("Window Creation failed. ERROR: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    // Create a renderer
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
-    if (renderer == NULL) {
-        printf("Renderer Creation failed. ERROR: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
+    application_t application = { 0 };
+    init_application(&application);
 
     // Event loop
-    SDL_Event e;
-    int quit = 0;
-    while (!quit) {
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_EVENT_QUIT) quit = 1;
-        }
+    while (application.running) {
+        handle_events(&application);
 
         // Set draw color to black and clear
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // R, G, B, A
-        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(application.renderer, 0, 0, 0, 255);  // R, G, B, A
+        SDL_RenderClear(application.renderer);
         
         // Present the renderer (update the screen)
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(application.renderer);
     }
 
     // Clean up
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    destroy_application(&application);
 
     return 0;
 }
