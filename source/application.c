@@ -96,7 +96,7 @@ static SDL_EventType handle_events(application_t *application) {
 
 // mainloop : the application main loop
 int mainloop(application_t *application) {
-    particle_t particle = new_particle((vector2D_t) { (int) (application->width / 2), (int) (application->height / 2) }, RED);
+    particle_t *particles = init_particles(application, NUMENTITIES);
 
     while (application->state == RUNNING || application->state == PAUSED) {
         handle_events(application);
@@ -105,12 +105,16 @@ int mainloop(application_t *application) {
         SDL_SetRenderDrawColor(application->renderer, RGBA_BLACK);  // R, G, B, A
         SDL_RenderClear(application->renderer);
 
-        // Present the renderer (update the screen)
-        draw_particle(application, particle);
-
+        // Draw particles on the screen
+        for (int i = 0; i < NUMENTITIES; i++) {
+            draw_particle(application, particles[i]);
+        }
+        
         // Present the renderer (update the screen)
         SDL_RenderPresent(application->renderer);
     }
+
+    destroy_particles(particles);
 
     return 1;
 }

@@ -19,6 +19,8 @@ typedef struct application {
     enum state state;
 } application_t;
 
+#define NUMENTITIES 1024
+
 // init_application : initializes the resources for the application
 int init_application(application_t *application);
 
