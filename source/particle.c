@@ -15,7 +15,7 @@ static SDL_Color rgba[NUMCLASSES] = {
     { 175,  82, 222, 255 },
     { 255, 149,   0, 255 },
     { 50,  173, 230, 255 },
-    { 255,  45,  85, 255 }
+    { 255, 127, 255, 255 }
 };
 
 // new_particle : creates a new particle
@@ -52,6 +52,14 @@ void destroy_particles(particle_t *particles) {
     free(particles);
 }
 
+// fill_particle : fills in the particle based on it's bounds
+static void fill_particle(application_t *application, int start, int end, int particle_y, int y_offset) {
+    for (int i = start; i < end + 1; i++) {
+        SDL_RenderPoint(application->renderer, i, particle_y + y_offset);
+        SDL_RenderPoint(application->renderer, i, particle_y - y_offset);
+    }
+}
+
 // draw_particle : draws a particle to the screen
 void draw_particle(application_t *application, particle_t particle) {
     // set draw color of the particle
@@ -59,10 +67,7 @@ void draw_particle(application_t *application, particle_t particle) {
     SDL_SetRenderDrawColor(application->renderer, rgba[particle.class].r, rgba[particle.class].g, rgba[particle.class].b, rgba[particle.class].a);
 
     // midpoint algorithm for drawing circles
-    for (int x = particle.position.x - RADIUS; x < particle.position.x + RADIUS + 1; x++) {
-        SDL_RenderPoint(application->renderer, x, particle.position.y);
-        SDL_RenderPoint(application->renderer, x, particle.position.y);
-    }
+    fill_particle(application, particle.position.x - RADIUS, particle.position.x + RADIUS, particle.position.y, 0);
 
     int x = RADIUS;
     int y = 0;
@@ -80,25 +85,10 @@ void draw_particle(application_t *application, particle_t particle) {
         // all points found 
         if (x < y) break;
 
-        // drawing the generated point and its reflection
-        for (int i = particle.position.x - x; i < particle.position.x + x + 1; i++) {
-            SDL_RenderPoint(application->renderer, i, particle.position.y + y);
-            SDL_RenderPoint(application->renderer, i, particle.position.y - y);
-        }
+        fill_particle(application, particle.position.x - x, particle.position.x + x, particle.position.y, y);
     
-        if (x != y) {
-            // bottom
-            for (int i = particle.position.x - y; i < particle.position.x + y + 1; i++) {
-                SDL_RenderPoint(application->renderer, i, particle.position.y + x);
-                SDL_RenderPoint(application->renderer, i, particle.position.y + x);
-            }
-            
-            // top
-            for (int i = particle.position.x - y; i < particle.position.x + y + 1; i++) {
-                SDL_RenderPoint(application->renderer, i, particle.position.y - x);
-                SDL_RenderPoint(application->renderer, i, particle.position.y - x);
-            }
-        }
+        if (x != y)
+            fill_particle(application, particle.position.x - y, particle.position.x + y, particle.position.y, x);
     }
 }
 

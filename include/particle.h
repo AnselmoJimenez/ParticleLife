@@ -21,7 +21,7 @@ typedef enum classifier {
     PURPLE,
     ORANGE,
     CYAN,
-    MAGENTA,
+    PINK,
 } class_t;
 
 #define RGBA_WHITE  255, 255, 255, 255
