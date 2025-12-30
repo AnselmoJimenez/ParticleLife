@@ -5,6 +5,7 @@
 
 #include "../include/application.h"
 #include "../include/particle.h"
+#include "../include/imgui.h"
 
 #define DEFAULT_HEIGHT  600
 #define DEFAULT_WIDTH   800
@@ -74,32 +75,44 @@ int destroy_application(application_t *application) {
 
 
 // handle_events : the event loop - checks for events and returns them
-static SDL_EventType handle_events(application_t *application) {
+static void handle_events(application_t *application, context_t *gui_context) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
-            case SDL_EVENT_QUIT: 
+            case SDL_EVENT_QUIT: {
                 application->state = UNINITIALIZED;
-                return SDL_EVENT_QUIT;
-        
-            case SDL_EVENT_WINDOW_RESIZED:
+                break;
+            }
+            case SDL_EVENT_WINDOW_RESIZED: {
                 SDL_GetWindowSize(application->window, &application->width, &application->height);
-                return SDL_EVENT_WINDOW_RESIZED;
-
-            default:
-                return e.type;
+                break;
+            }
+            case SDL_EVENT_MOUSE_MOTION: {
+                SDL_GetMouseState(&gui_context->mouse_x, &gui_context->mouse_y);
+                break;
+            }
+            case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+                if (!gui_context->mouse_press) 
+                    gui_context->mouse_press = 1;
+                break;
+            }
+            case SDL_EVENT_MOUSE_BUTTON_UP: {
+                if (gui_context->mouse_press)
+                    gui_context->mouse_press = 0;
+                break; 
+            }
+            default: break;
         }
     }
-    
-    return SDL_EVENT_FIRST;
 }
 
 // mainloop : the application main loop
 int mainloop(application_t *application) {
+    context_t gui_context;
     particle_t *particles = init_particles(application, NUMENTITIES);
 
     while (application->state == RUNNING || application->state == PAUSED) {
-        handle_events(application);
+        handle_events(application, &gui_context);
 
         // Set draw color to black and clear
         SDL_SetRenderDrawColor(application->renderer, RGBA_BLACK);  // R, G, B, A
