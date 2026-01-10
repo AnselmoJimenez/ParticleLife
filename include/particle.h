@@ -37,9 +37,6 @@ typedef struct particle {
 #define RADIUS      3
 #define DIAMETER    (2 * RADIUS)
 
-// new_particle : creates a new particle
-particle_t new_particle(vector2D_t position, class_t class);
-
 // init_particles : creates a pointer to an array of n particles
 particle_t *init_particles(application_t *application, unsigned int n);
 

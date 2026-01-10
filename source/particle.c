@@ -19,7 +19,7 @@ static SDL_Color rgba[NUMCLASSES] = {
 };
 
 // new_particle : creates a new particle
-particle_t new_particle(vector2D_t position, class_t class) {
+static particle_t new_particle(vector2D_t position, class_t class) {
     return (particle_t) {
         .position = position,
         .acceleration = (vector2D_t) { .x = 0.0f, .y = 0.0f },
