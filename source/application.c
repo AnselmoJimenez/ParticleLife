@@ -5,10 +5,9 @@
 
 #include "../include/application.h"
 #include "../include/particle.h"
-#include "../include/imgui.h"
 
-#define DEFAULT_HEIGHT  600
-#define DEFAULT_WIDTH   800
+#define DEFAULT_HEIGHT  800
+#define DEFAULT_WIDTH   1024
 
 // init_application : initializes the resources for the application
 int init_application(application_t *application) {
@@ -75,7 +74,7 @@ int destroy_application(application_t *application) {
 
 
 // handle_events : the event loop - checks for events and returns them
-static void handle_events(application_t *application, context_t *context) {
+static void handle_events(application_t *application) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
@@ -85,24 +84,12 @@ static void handle_events(application_t *application, context_t *context) {
             }
             case SDL_EVENT_WINDOW_RESIZED: {
                 SDL_GetWindowSize(application->window, &application->width, &application->height);
-                context->container.height = application->height;
-                context->container.width = DEFAULT_GUI_WIDTH;
                 break;
             }
-            case SDL_EVENT_MOUSE_MOTION: {
-                SDL_GetMouseState(&context->mouse.x, &context->mouse.y);
-                break;
-            }
-            case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-                if (!context->mouse.click) 
-                    context->mouse.click = 1;
-                break;
-            }
-            case SDL_EVENT_MOUSE_BUTTON_UP: {
-                if (context->mouse.click)
-                    context->mouse.click = 0;
+            case SDL_EVENT_MOUSE_MOTION:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
                 break; 
-            }
             default: break;
         }
     }
@@ -110,28 +97,24 @@ static void handle_events(application_t *application, context_t *context) {
 
 // mainloop : the application main loop
 int mainloop(application_t *application) {
-    context_t context = { 0 };
-    init_gui(application, &context);
-    // particle_t *particles = init_particles(application, NUMENTITIES);
+    particle_t *particles = init_particles(application, NUMENTITIES);
 
     while (application->state == RUNNING || application->state == PAUSED) {
-        handle_events(application, &context);
+        handle_events(application);
 
         // Set draw color to black and clear
         SDL_SetRenderDrawColor(application->renderer, RGBA_BLACK);  // R, G, B, A
         SDL_RenderClear(application->renderer);
 
         // Draw particles on the screen
-        // for (int i = 0; i < NUMENTITIES; i++) {
-        //     draw_particle(application, particles[i]);
-        // }
-        draw_gui(*application, context);
+        for (int i = 0; i < NUMENTITIES; i++)
+            draw_particle(application, particles[i]);
         
         // Present the renderer (update the screen)
         SDL_RenderPresent(application->renderer);
     }
 
-    // destroy_particles(particles);
+    destroy_particles(particles);
 
     return 1;
 }
