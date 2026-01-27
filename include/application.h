@@ -16,10 +16,9 @@ typedef struct application {
     SDL_Renderer *renderer;
     int height;
     int width;
+    double delta_time;
     enum state state;
 } application_t;
-
-#define NUMENTITIES 512
 
 // init_application : initializes the resources for the application
 int init_application(application_t *application);

@@ -1,3 +1,5 @@
+// application.c
+
 #include <stdio.h>
 
 #include "SDL.h"
@@ -7,7 +9,7 @@
 #include "../include/particle.h"
 
 #define DEFAULT_HEIGHT  800
-#define DEFAULT_WIDTH   1024
+#define DEFAULT_WIDTH   1800
 
 // init_application : initializes the resources for the application
 int init_application(application_t *application) {
@@ -18,10 +20,10 @@ int init_application(application_t *application) {
         printf("SDL Initialization failed. ERROR: %s\n", SDL_GetError());
         return 0;
     }
-    application->state = RUNNING;
 
     application->height = DEFAULT_HEIGHT;
     application->width = DEFAULT_WIDTH;
+    application->delta_time = 0.0F;
 
     // initialize the window
     application->window = SDL_CreateWindow("Particle Life", DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_OPENGL);
@@ -46,6 +48,8 @@ int init_application(application_t *application) {
         SDL_Quit();
         return 0;
     }
+
+    application->state = RUNNING;
 
     return 1;
 }
@@ -97,7 +101,7 @@ static void handle_events(application_t *application) {
 
 // mainloop : the application main loop
 int mainloop(application_t *application) {
-    particle_t *particles = init_particles(application, NUMENTITIES);
+    particle_t *particles = init_particles(application, NUMPARTICLES, MAXNUMCLASSES);
 
     while (application->state == RUNNING || application->state == PAUSED) {
         handle_events(application);
@@ -107,11 +111,13 @@ int mainloop(application_t *application) {
         SDL_RenderClear(application->renderer);
 
         // Draw particles on the screen
-        for (int i = 0; i < NUMENTITIES; i++)
+        for (int i = 0; i < NUMPARTICLES; i++)
             draw_particle(application, particles[i]);
         
         // Present the renderer (update the screen)
         SDL_RenderPresent(application->renderer);
+
+        update_particles(application, particles);
     }
 
     destroy_particles(particles);
