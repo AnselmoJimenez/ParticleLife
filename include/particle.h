@@ -22,11 +22,11 @@ typedef enum classifier {
     PURPLE,
     ORANGE,
     CYAN,
-    PINK,
+    WHITE,
 } class_t;
 
 #define RGBA_WHITE  255, 255, 255, 255
-#define RGBA_BLACK    0,   0,   0, 255
+#define RGBA_BLACK  0.0f, 0.0f, 0.0f, 0.0f
 
 typedef struct particle {
     vector2D_t position;        // position of the particle (x, y)

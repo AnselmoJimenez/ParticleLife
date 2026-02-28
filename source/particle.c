@@ -209,8 +209,8 @@ void draw_particle(application_t *application, particle_t particle) {
         if (x < y) break;
 
         fill_particle(application, particle.position.x - x, particle.position.x + x, particle.position.y, y);
-    
-        if (x != y)
+
+        if (x != y) {}
             fill_particle(application, particle.position.x - y, particle.position.x + y, particle.position.y, x);
     }
 }
